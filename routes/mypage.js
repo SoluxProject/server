@@ -132,6 +132,7 @@ router.post('/changeMajor', verifyToken, (req,res)=>{
 } )
 
 
+router.post('/changeTel', verifyToken, (req,res)=>{
  
 
 
