@@ -129,10 +129,40 @@ router.post('/changeMajor', verifyToken, (req,res)=>{
     }catch(err){
         console.log(err);
     }
-} )
-
+})
 
 router.post('/changeTel', verifyToken, (req,res)=>{
+  const id = req.decoded.id;
+  const { newTel } = req.body;
+  try{
+    console.log(id+","+newTel);
+    const sqlSearch = "SELECT * from user WHERE id = ?";
+    connection.query(sqlSearch, id, (err,result)=>{
+      if(err) console.log(err);
+      else{
+        if(result.length==0){
+          console.log('존재하지 않는 회원');
+          return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+        }
+        else{
+          const telUpdate = "UPDATE user SET tel = ? WHERE id = ?";
+          connection.query(telUpdate, [newTel, id], (err,result)=>{
+            if(err){
+              console.log(err);
+              return res.json({result : false, message : 'tel 변경 오류'});
+            }
+            else{
+              console.log('tel 변경 성공');
+              return res.json({result : true, message : 'tel 변경 완료'});
+            }
+          })
+        }
+      }
+    })
+  }catch(err){
+    console.log(err);
+  }
+})
  
 
 
