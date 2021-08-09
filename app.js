@@ -15,6 +15,7 @@ const authRouter = require('./routes/auth');
 const todoRouter = require('./routes/todo');
 const ddayRouter = require('./routes/dday');
 const mypageRouter = require('./routes/mypage');
+const dailyRouter = require('./routes/dailynote');
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use('/auth',authRouter);
 app.use('/todo',todoRouter);
 app.use('/dday',ddayRouter);
 app.use('/mypage', mypageRouter);
+app.use('/dailynote', dailyRouter);
 
 app.use((req, res, next) => {
   const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
