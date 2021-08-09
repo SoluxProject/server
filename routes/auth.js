@@ -16,25 +16,28 @@ const connection = solux_db.init();
 solux_db.test_open(connection);
 
 router.post('/join', isNotLoggedIn, async(req,res,next)=>{
-    const { id, pw, email, major, name } = req.body;
+    const { id, pw, email, major, name ,tel } = req.body;
     try{
         const sqlSearch = "SELECT * from user where id=?";
 
         connection.query(sqlSearch, id, async(err,result)=>{
+          if(err) console.log(err);
+          else{
             console.log(result);
             if(result.length !=0 ){ //해당 id가 존재할때
                 console.log('이미 존재하는 id');
                 return res.send('이미 회원임');
             }
             const hash = await bcrypt.hash(pw, 12);
-            const sqlInsert = "INSERT INTO user (id,pw,email,major,name) VALUES (?,?,?,?,?)"
-            connection.query(sqlInsert, [id,hash,email,major,name], (err,result)=>{
+            const sqlInsert = "INSERT INTO user (id,pw,email,major,name,tel) VALUES (?,?,?,?,?,?)"
+            connection.query(sqlInsert, [id,hash,email,major,name,tel], (err,result)=>{
             if (err) console.log(err);
             else {
                 console.log('회원가입 성공 후 이동');
                 return res.send(id);
             }
-            });  
+            });
+          }  
         } );
   
     }catch(err){
@@ -87,7 +90,28 @@ router.get('/logout', isLoggedIn, (req,res)=>{
 });
 
 router.get('/searchId', isNotLoggedIn, (req,res)=>{
-
+  const { name, tel } = req.body;
+  try{
+    console.log(name+","+tel);
+    const sqlSearch = "SELECT id from user WHERE name = ? AND tel = ?";
+    connection.query(sqlSearch, [name, tel], (err,result)=>{
+      if(err){
+        console.log(err);
+      }
+      else{
+        if(result.length==0){
+          console.log('존재하지 않는 회원');
+          return res.json({result: false, message : '존재하지 않는 회원입니다.'});
+        }
+        else{
+          console.log('ID 찾기 성공');
+          return res.json({result : true, message : result});
+        }
+      }
+    })
+  }catch(err){
+    console.log(err);
+  }
 })
 
 router.post('/searchPw', isNotLoggedIn, (req,res)=>{
@@ -100,24 +124,26 @@ router.post('/searchPw', isNotLoggedIn, (req,res)=>{
         console.log(err);
       }
       else{
-      if(result.length ==0 ){
-        console.log('존재하지 않는 회원');
-        return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+        if(result.length ==0 ){
+          console.log('존재하지 않는 회원');
+          return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+        }
+        else{
+          const pwUpdate = "UPDATE user SET pw = ? WHERE id=? AND name = ?";
+          const hash = await bcrypt.hash(newPw,12);
+          connection.query(pwUpdate, [hash, id, name] , async(err,result)=>{
+            if(err){
+              console.log(err);
+              return res.json({result : false, message : '비밀번호 변경 오류입니다.'});
+            }
+            else{
+              console.log('pw변경 성공');
+              return res.json({result : true, message : '비밀번호 변경 완료'});
+            }
+          })
+        }
       }
-      else{
-        const pwUpdate = "UPDATE user SET pw = ? WHERE id=? AND name = ?";
-        const hash = await bcrypt.hash(newPw,12);
-        connection.query(pwUpdate, [hash, id, name] , async(err,result)=>{
-          if(err){
-            console.log(err);
-            return res.json({result : false, message : '비밀번호 변경 오류입니다.'});
-          }
-          else{
-            console.log('pw변경 성공');
-            return res.json({result : true, message : '비밀번호 변경 완료'});
-          }
-      })}
-    }});
+    });
   }catch(err){
     console.log(err);
   }
