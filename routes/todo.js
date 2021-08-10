@@ -25,15 +25,13 @@ router.get('/list', verifyToken, (req,res)=>{
         connection.query(searchList, todoid, (err,result)=>{
             console.log(result);
             if (result.length==0){
-                console.log('아직 todo 없음');
+                return res.json({success : true, message : '아직 todo 없음'});
             }
             return res.send(result);
-                //console.log('todo 리스트 없음');
-                //return res.send('todo 리스트 없음');  
         })
     }catch(err){
         console.error(err);
-        return err;
+        return res.json({success : false, message : 'todo list 오류'});
     }
 });
 
@@ -46,7 +44,7 @@ router.post('/change', (req,res)=>{
             console.log(result);
             if(err){
                 console.log(err);
-                console.log('todo change 오류');
+                return res.json({success : false, message : 'todo change 오류'});
             }else{
                 console.log('change 성공');
                 return res.redirect('/todo/list');
@@ -72,7 +70,7 @@ router.post('/check', (req,res)=>{
                     console.log(result2);
                     if(err){
                         console.log(err);
-                        console.log('todo check 오류');
+                        return res.json({success : false, message : 'todo check to 0 오류'});
                     }else{
                         console.log('update 성공');
                         return res.redirect('/todo/list');
@@ -83,7 +81,7 @@ router.post('/check', (req,res)=>{
                     console.log(result2);
                     if(err){
                         console.log(err);
-                        console.log('todo check 오류');
+                        return res.json({success : false, message : 'todo check to 1 오류'});
                     }else{
                         console.log('update 성공');
                         return res.redirect('/todo/list');
@@ -107,7 +105,7 @@ router.post('/delete', (req, res)=>{
             console.log(result);
             if(err){
                 console.log(err);
-                console.log('todo delete 오류');
+                return res.json({success : false, message : 'todo delete 오류'});
             }
             else{
                 console.log("Number of records deleted: " + result.affectedRows);
@@ -132,7 +130,6 @@ router.post('/insert', verifyToken, (req,res)=>{
         connection.query(insertTodo, [todoid, content, moment().format("YYYY-MM-DD"), 0 ] , async(err,result)=>{
             if(err) console.log(err);
             else{
-
                 console.log('todo 추가 성공');
                 return res.redirect('/todo/list');
                 //return res.send(content);
@@ -140,6 +137,7 @@ router.post('/insert', verifyToken, (req,res)=>{
         });
     }catch(err){
         console.log(err);
+        return res.json({success : false, message : 'todo 추가 오류'});
     }
 
 });

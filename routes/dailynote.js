@@ -17,7 +17,7 @@ router.get('/list', verifyToken, (req,res)=>{
         connection.query(searchList, dailyid, (err,result)=>{
             console.log(result);
             if (result.length==0){
-                console.log('아직 daily 없음');
+                return res.json({success : true, message : '아직 dailynote 없음'});
             }
             return res.send(result);
         })
@@ -36,7 +36,7 @@ router.post('/change', (req,res)=>{
             console.log(result);
             if(err){
                 console.log(err);
-                console.log('daily change 오류');
+                return res.json({success : false, message : 'daily change 오류'});
             }else{
                 console.log('daily 완료');
                 return res.redirect('/dailynote/list');
@@ -62,7 +62,7 @@ router.post('/check', (req,res)=>{
                     console.log(result2);
                     if(err){
                         console.log(err);
-                        console.log('daily check 오류');
+                        return res.json({success : false, message : 'daily check to 0 오류'});
                     }else{
                         console.log('update to 0 완료');
                         return res.redirect('/dailynote/list');
@@ -73,7 +73,7 @@ router.post('/check', (req,res)=>{
                     console.log(result2);
                     if(err){
                         console.log(err);
-                        console.log('daily check 오류');
+                        return res.json({success : false, message : 'daily check to 1 오류'});
                     }else{
                         console.log('update to 1 완료');
                         return res.redirect('/dailynote/list');
@@ -95,7 +95,7 @@ router.post('/delete', (req, res)=>{
             console.log(result);
             if(err){
                 console.log(err);
-                console.log('daily delete 오류');
+                return res.json({success : false, message : 'daily delete 오류'});
             }
             else{
                 console.log("Number of records deleted: " + result.affectedRows);
@@ -126,6 +126,7 @@ router.post('/insert', verifyToken, (req,res)=>{
         });
     }catch(err){
         console.log(err);
+        return res.json({success : false, message : 'daily 추가 오류'});
     }
 });
 

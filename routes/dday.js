@@ -20,7 +20,7 @@ router.get('/list', verifyToken, (req,res)=>{
             if(err) console.log(err);
             else{
                 if(result.length==0){ //존재하지 않는 회원
-                    console.log('아직 dday 없음');
+                    return res.json({success : true, message : '아직 dday 없음'});
                 }
                 return res.send(result);
             }
@@ -38,7 +38,7 @@ router.post('/insert',  verifyToken, (req,res)=>{
         connection.query(sqlInsert, [id,date,content], (err, result)=>{
             if(err){
                 console.log(err);
-                console.log('dday insert 오류');
+                return res.json({success : false, message : 'dday insert 오류'});
             }
             else{
                 return res.redirect('/dday/list');
@@ -60,7 +60,7 @@ router.post('/delete', (req,res)=>{
             console.log(result);
             if(err){
                 console.log(err);
-                console.log('dday delete 오류');
+                return res.json({success : false, message : 'dday delete 오류'});
             }
             else{
                 console.log("Number of records deleted: " + result.affectedRows);
@@ -84,6 +84,7 @@ router.post('/changeDate', (req,res)=>{
         })
     }catch(err){
         console.log(err);
+        return res.json({success : false, message : 'dday 날짜 수정 오류'});
     }
     
 })
@@ -101,6 +102,7 @@ router.post('/changeCont', (req,res)=>{
         })
     }catch(err){
         console.log(err);
+        return res.json({success : false, message : 'dday 내용 수정 오류'});
     }
 })
 
