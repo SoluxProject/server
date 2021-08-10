@@ -21,12 +21,15 @@ router.post('/join', isNotLoggedIn, async(req,res,next)=>{
         const sqlSearch = "SELECT * from user where id=?";
 
         connection.query(sqlSearch, id, async(err,result)=>{
-          if(err) console.log(err);
+          if(err) {
+            console.log(err);
+            return res.json({ success : false, message : "회원가입 실패"})
+          }
           else{
             console.log(result);
             if(result.length !=0 ){ //해당 id가 존재할때
                 console.log('이미 존재하는 id');
-                return res.send('이미 회원임');
+                return res.json({ success : false, message : "이미 존재하는 id 입니다."})
             }
             const hash = await bcrypt.hash(pw, 12);
             const sqlInsert = "INSERT INTO user (id,pw,email,major,name,tel) VALUES (?,?,?,?,?,?)"
@@ -34,7 +37,7 @@ router.post('/join', isNotLoggedIn, async(req,res,next)=>{
             if (err) console.log(err);
             else {
                 console.log('회원가입 성공 후 이동');
-                return res.send(id);
+                return res.json({ success : true , message : "회원가입 성공"});
             }
             });
           }  
@@ -54,7 +57,7 @@ router.post('/login', isNotLoggedIn, (req,res,next)=>{
         }
         if (!user) { //로그인 실패
             console.log('회원이 아닙니다');
-          return res.redirect(`/?loginError=${info.message}`);
+            return res.json({ success : false, message : info.message});
         }
         return req.login(user,{session : false}, (loginError) => {//로그인 성공
           if (loginError) {//index의 serializeUser 성공 후 실행
@@ -71,7 +74,7 @@ router.post('/login', isNotLoggedIn, (req,res,next)=>{
         //return res.json({success : true, message : "로그인 성공", token});
         console.log(token);
         res.cookie("loginToken", token , {maxAge : 60000});
-        return res.json({ jwt: "token"});
+        return res.json({ success : true, message : "로그인 성공"});
         //return res.json({ result : 'ok', token });
         });
       })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
@@ -86,7 +89,7 @@ router.get('/logout', isLoggedIn, (req,res)=>{
     res.clearCookie("loginToken");
     req.logout();
     req.session.destroy();
-    return res.status(205).send('로그아웃 성공');
+    return res.status(205).json({ success : true, message : "로그아웃 성공"});
 });
 
 router.get('/searchId', isNotLoggedIn, (req,res)=>{
