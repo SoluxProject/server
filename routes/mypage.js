@@ -17,11 +17,11 @@ router.get('/info', verifyToken, (req,res)=>{
       connection.query(sqlInfo, id, (err,result)=>{
         if(result.length!=0){
           console.log(result);
-          return res.send(result);
+          return res.json({ success : true, data : result});
         }
         else{
           console.log('잘못된 ID');
-  
+          return res.json({ success : false, message : '잘못된 ID'});
         }
       })
     }catch(err){
@@ -38,11 +38,13 @@ router.post('/changePw', verifyToken, (req,res)=>{
       connection.query(sqlSearch, [id, name], async(err,result)=>{
         if(err) {
           console.log(err);
+          return res.json({success : false, message : '비밀번호 변경 오류입니다.'});
+
         }
         else{
         if(result.length ==0 ){
           console.log('존재하지 않는 회원');
-          return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+          return res.json({success : false, message : '존재하지 않는 회원입니다.'});
         }
         else{
           const pwUpdate = "UPDATE user SET pw = ? WHERE id=? AND name = ?";
@@ -50,11 +52,11 @@ router.post('/changePw', verifyToken, (req,res)=>{
           connection.query(pwUpdate, [hash, id, name] , async(err,result)=>{
             if(err){
               console.log(err);
-              return res.json({result : false, message : '비밀번호 변경 오류입니다.'});
+              return res.json({success : false, message : '비밀번호 변경 오류입니다.'});
             }
             else{
               console.log('pw변경 성공');
-              return res.json({result : true, message : '비밀번호 변경 완료'});
+              return res.json({success : true, message : '비밀번호 변경 완료'});
             }
         })}
       }});
@@ -72,22 +74,23 @@ router.post('/changeEmail', verifyToken, (req,res)=>{
         connection.query(sqlSearch, id, (err,result)=>{
             if(err){
                 console.log(err);
+                return res.json({success : false, message : 'email 변경 오류'});
             }
             else{
                 if(result.length==0){
                     console.log('존재하지 않는 회원');
-                    return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+                    return res.json({success : false, message : '존재하지 않는 회원입니다.'});
                 }
                 else{
                     const emailUpdate = "UPDATE user SET email = ? WHERE id = ?";
                     connection.query(emailUpdate, [newEmail, id], (err,result)=>{
                         if(err) {
                             console.log(err);
-                            return res.json({result : false, message : 'email 변경 오류'});
+                            return res.json({success : false, message : 'email 변경 오류'});
                         }
                         else{
                             console.log('email 변경 성공');
-                            return res.json({result: true, message : 'email 변경 완료'});
+                            return res.json({success: true, message : 'email 변경 완료'});
                         }
                     })
                 }
@@ -105,22 +108,25 @@ router.post('/changeMajor', verifyToken, (req,res)=>{
         console.log(id+","+newMajor);
         const sqlSearch = "SELECT * from user WHERE id = ?";
         connection.query(sqlSearch, id, (err,result)=>{
-            if(err) console.log(err);
+            if(err) {
+               console.log(err);
+               return res.json({success : false, message : 'major 변경 오류'});
+            }
             else{
                 if(result.length==0){
                     console.log('존재하지 않는 회원');
-                    return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+                    return res.json({success : false, message : '존재하지 않는 회원입니다.'});
                 }
                 else{
                     const majorUpdate = "UPDATE user SET major = ? WHERE id = ?";
                     connection.query(majorUpdate, [newMajor, id], (err,result)=>{
                         if(err){
                             console.log(err);
-                            return res.json({result : false, message : 'major 변경 오류'});
+                            return res.json({success : false, message : 'major 변경 오류'});
                         }
                         else{
                             console.log('major 변경 성공');
-                            return res.json({result : true, message : 'major 변경 완료'});
+                            return res.json({success : true, message : 'major 변경 완료'});
                         }
                     })
                 }
@@ -138,22 +144,25 @@ router.post('/changeTel', verifyToken, (req,res)=>{
     console.log(id+","+newTel);
     const sqlSearch = "SELECT * from user WHERE id = ?";
     connection.query(sqlSearch, id, (err,result)=>{
-      if(err) console.log(err);
+      if(err) {
+        console.log(err);
+        return res.json({success : false, message : 'tel 변경 오류'});
+      }
       else{
         if(result.length==0){
           console.log('존재하지 않는 회원');
-          return res.json({result : false, message : '존재하지 않는 회원입니다.'});
+          return res.json({success : false, message : '존재하지 않는 회원입니다.'});
         }
         else{
           const telUpdate = "UPDATE user SET tel = ? WHERE id = ?";
           connection.query(telUpdate, [newTel, id], (err,result)=>{
             if(err){
               console.log(err);
-              return res.json({result : false, message : 'tel 변경 오류'});
+              return res.json({success : false, message : 'tel 변경 오류'});
             }
             else{
               console.log('tel 변경 성공');
-              return res.json({result : true, message : 'tel 변경 완료'});
+              return res.json({success : true, message : 'tel 변경 완료'});
             }
           })
         }
