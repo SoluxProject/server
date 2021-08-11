@@ -37,7 +37,21 @@ router.post('/join', isNotLoggedIn, async(req,res,next)=>{
             if (err) console.log(err);
             else {
                 console.log('회원가입 성공 후 이동');
-                return res.json({ success : true , message : "회원가입 성공"});
+                const timerDayInsert = "INSERT INTO timerDay (timerDayid) VALUES (?)";
+                connection.query(timerDayInsert, [id], (err,result)=>{
+                  if(err) console.log(err);
+                  else{
+                    console.log('timerDay 추가');
+                    const timerWeekInsert = "INSERT INTO timerWeek (timerWeekid) VALUES (?)";
+                    connection.query(timerWeekInsert, [id], (err,result)=>{
+                      if(err)console.log(err);
+                      else{
+                        console.log('timerWeek 추가');
+                        return res.json({ success : true , message : "회원가입 성공"});
+                      }
+                    })
+                  }
+                })
             }
             });
           }  
@@ -92,7 +106,7 @@ router.get('/logout', isLoggedIn, (req,res)=>{
     return res.status(205).json({ success : true, message : "로그아웃 성공"});
 });
 
-router.get('/searchId', isNotLoggedIn, (req,res)=>{
+router.post('/searchId', isNotLoggedIn, (req,res)=>{
   const { name, tel } = req.body;
   try{
     console.log(name+","+tel);
@@ -147,6 +161,30 @@ router.post('/searchPw', isNotLoggedIn, (req,res)=>{
         }
       }
     });
+  }catch(err){
+    console.log(err);
+  }
+})
+
+router.get('/checkId', (req,res)=>{
+  const id = req.body.id;
+  try{
+    console.log(id);
+    const checkId = "SELECT * from user WHERE id=?";
+    connection.query(checkId, id, async(err,result)=>{
+      if(err){
+        console.log(err);
+        return res.json({ success : false, message : 'ID 중복확인 오류'});
+      }
+      if (result.length!=0){
+        console.log('이미 사용중인 ID');
+        return res.json({ success : false, message : '이미 사용중인 ID 입니다.' });
+      }
+      else{
+        console.log('사용가능한 ID');
+        return res.json({ success : true, message : '사용가능한 ID 입니다.'});
+      }
+    })
   }catch(err){
     console.log(err);
   }
