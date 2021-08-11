@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 const {verifyToken} = require('./middlewares')
 const db = require('../models/db')();
 const connection = db.init();
-router = express.Router();
+const router = express.Router();
 
 db.test_open(connection);
 

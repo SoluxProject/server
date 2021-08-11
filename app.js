@@ -16,6 +16,7 @@ const ddayRouter = require('./routes/dday');
 const mypageRouter = require('./routes/mypage');
 const dailyRouter = require('./routes/dailynote');
 const timerWRouter = require('./routes/timerWeek');
+const timerDRouter = require('./routes/timerDay');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/dday',ddayRouter);
 app.use('/mypage', mypageRouter);
 app.use('/dailynote', dailyRouter);
 app.use('/timerWeek', timerWRouter);
+app.use('/timerDay', timerDRouter);
 
 app.use((req, res, next) => {
   const error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
