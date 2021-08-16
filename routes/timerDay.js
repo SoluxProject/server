@@ -16,7 +16,7 @@ router.get('/list', verifyToken, (req, res) => {
         connection.query(sqlSearch, id, (err, result) => {
             if (err) console.log(err);
             else {
-                if (result.length == 0) { //존재하지 않는 회원
+                if (result.length == 0) {
                     return res.json({ success: true, message: '아직 기록된 timer record 없음' });
                 }
                 return res.send(result);
@@ -34,13 +34,19 @@ router.post('/update', verifyToken, (req, res) => {
     try {
         const sqlSelect = "SELECT recordDay from timerDay WHERE timerDayid =?";
         connection.query(sqlSelect, timerDayid, (err, result) => {
-            if (err) console.log('select 오류 ' + err);
+            if (err) {
+                console.log('select 오류 ' + err);
+                return res.send({success: false, message : "select 오류"});
+            }
             else {
                 const newrecord = parseInt(recordDay) + parseInt(result[0].recordDay);
                 console.log(newrecord);
                 const sqlChangeDate = "UPDATE timerDay SET recordDay = ? WHERE timerDayid = ?";
                 connection.query(sqlChangeDate, [newrecord, timerDayid], (err, result) => {
-                    if (err) console.log("update 오류 " + err);
+                    if (err) {
+                        console.log("update 오류 " + err);
+                        return res.send({success: false, message : "일일 타이머 기록 갱신 오류"});
+                    }
                     else {
                         console.log('timerDay record 수정 완료');
                         res.redirect('/timerDay/list');
