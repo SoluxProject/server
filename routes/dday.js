@@ -1,109 +1,12 @@
 const express = require('express');
-const mysql = require('mysql');
-
 const router = express.Router();
-
-const path = require('path');
 const { verifyToken } = require('./middlewares');
+const ctrl = require("../controllers/dday.ctrl");
 
-const solux_db = require('../models/db')();
-const connection = solux_db.init();
-
-solux_db.test_open(connection);
-
-router.get('/list', verifyToken, (req,res)=>{
-    const id = req.decoded.id;
-    try{
-        console.log('id : '+id);
-        const sqlSearch = "SELECT * from dday WHERE ddayid = ?";
-        connection.query(sqlSearch, id, (err,result)=>{
-            if(err) console.log(err);
-            else{
-                if(result.length==0){ //존재하지 않는 회원
-                    return res.json({success : true, message : '아직 dday 없음'});
-                }
-                return res.send(result);
-            }
-        });
-    }catch(err){
-        console.log(err);
-    }
-});
-
-router.post('/insert',  verifyToken, (req,res)=>{ 
-    const { id, date, content } = req.body;
-    try{
-        console.log('id : '+id);
-        const sqlInsert = "INSERT INTO dday (ddayid, date, content) VALUES (?,?,?)";
-        connection.query(sqlInsert, [id,date,content], (err, result)=>{
-            if(err){
-                console.log(err);
-                return res.json({success : false, message : 'dday insert 오류'});
-            }
-            else{
-                return res.redirect('/dday/list');
-            }
-        });
-    }catch(err){
-        console.log(err);
-    }
-    
-    
-})
-
-router.post('/delete', (req,res)=>{
-    console.log('delete 실행 시작');
-    const index = req.body.index;
-    try{
-        const sqlDelete = "DELETE FROM dday WHERE `index` = ?";
-        connection.query(sqlDelete, index, (err, result)=>{
-            console.log(result);
-            if(err){
-                console.log(err);
-                return res.json({success : false, message : 'dday delete 오류'});
-            }
-            else{
-                console.log("Number of records deleted: " + result.affectedRows);
-                return res.redirect('/dday/list');
-            }
-        });
-    }catch(err){
-        console.log(err);
-    }
-});
-router.post('/changeDate', (req,res)=>{
-    const { idx, date } = req.body;
-    try{
-        const sqlChangeDate = "UPDATE dday SET date = ? WHERE `index`= ?";
-        connection.query(sqlChangeDate, [date, idx], (err,result)=>{
-            if(err) console.log(err);
-            else{
-                console.log('수정 성공');
-                res.redirect('/dday/list');
-            }
-        })
-    }catch(err){
-        console.log(err);
-        return res.json({success : false, message : 'dday 날짜 수정 오류'});
-    }
-    
-})
-
-router.post('/changeCont', (req,res)=>{
-    const { idx, content } = req.body;
-    try{
-        const sqlChangeDate = "UPDATE dday SET content = ? WHERE `index`= ?";
-        connection.query(sqlChangeDate, [content, idx], (err,result)=>{
-            if(err) console.log(err);
-            else{
-                console.log('수정 성공');
-                res.redirect('/dday/list');
-            }
-        })
-    }catch(err){
-        console.log(err);
-        return res.json({success : false, message : 'dday 내용 수정 오류'});
-    }
-})
+router.get('/list', verifyToken, ctrl.list);
+router.post('/insert', verifyToken, ctrl.insert);
+router.post('/del', ctrl.del);
+router.post('/changeCont', ctrl.changeCont);
+router.post('/changeDate', ctrl.changeDate);
 
 module.exports = router;
