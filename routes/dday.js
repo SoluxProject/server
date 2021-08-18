@@ -5,7 +5,7 @@ const ctrl = require("../controllers/dday.ctrl");
 
 router.get('/list', verifyToken, ctrl.list);
 router.post('/insert', verifyToken, ctrl.insert);
-router.post('/del', ctrl.del);
+router.post('/delete', ctrl.del);
 router.post('/changeCont', ctrl.changeCont);
 router.post('/changeDate', ctrl.changeDate);
 
