@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('./middlewares');
-const ctrl = require("../controllers/manage");
+const ctrl = require("../controllers/manage.ctrl");
 
 router.get('/list', verifyToken, ctrl.list);
 router.post('/insert', verifyToken, ctrl.insert);
