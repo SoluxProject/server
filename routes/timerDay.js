@@ -26,8 +26,8 @@ schedule.scheduleJob('0 0 0 * * *',  async () => {
                         connection.query(sqlChangeWeek, [result3,result2[i].timerDayid], (err, fin) => {
                             if (err) console.log('week change 오류'+err);
                             else {
-                                const sqlDelete = "UPDATE timerDay SET recordDay = 0 ";
-                                connection.query(sqlDelete, (err, result4) => {
+                                const sqlDelete = "UPDATE timerDay SET recordDay = 0 WHERE timerDayid = ?";
+                                connection.query(sqlDelete, result2[i].timerDayid, (err, result4) => {
                                     if (err) console.log(err);
                                     else console.log('timer day 초기화 완료');
                                 })
