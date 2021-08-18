@@ -1,7 +1,6 @@
 const express = require('express');
 const db = require('../models/db')();
 const connection = db.init();
-db.test_open(connection);
 
 const rank = (req,res)=>{
     try{

@@ -1,10 +1,9 @@
 const express = require('express');
 const schedule = require('node-schedule');
+const router = express.Router();
+const ctrl = require("../controllers/timerWeek.ctrl");
 const db = require('../models/db')();
 const connection = db.init();
-const router = express.Router();
-db.test_open(connection);
-const ctrl = require("../controllers/timerWeek.ctrl");
 
 router.get('/rank', ctrl.rank);
 

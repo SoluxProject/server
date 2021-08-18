@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 exports.isLoggedIn = (req, res, next) => {
     if(req.cookies.loginToken)  { 
-  //if (req.isAuthenticated()) {
       next();
     } else {
       res.status(403).send('로그인 필요');
@@ -11,18 +10,15 @@ exports.isLoggedIn = (req, res, next) => {
   
   exports.isNotLoggedIn = (req, res, next) => {
     if(!req.cookies.loginToken){
-    //if (!req.isAuthenticated()) {
       next();
     } else {  
-      const message = encodeURIComponent('로그인한 상태입니다.');
-      res.redirect(`/?error=${message}`);
+      res.json({success : false, message : '로그인한 상태입니다.'});
     }
   };
 
   exports.verifyToken = (req,res,next)=>{
     try{
       const token = req.cookies.loginToken;
-      //const token = req.headers.authorization.split('Bearer')[1];
 
       req.decoded = jwt.verify(token,process.env.JWT_SECRET);
       return next();

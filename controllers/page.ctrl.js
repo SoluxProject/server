@@ -1,7 +1,6 @@
 const express = require('express');
 const solux_db = require('../models/db')();
 const connection = solux_db.init();
-solux_db.test_open(connection);
 
 const join = (req, res) => {
     console.log('회원가입으로 이동');
