@@ -25,14 +25,7 @@ app.set('port', process.env.PORT || 3001);
 app.set("etag",false);
 const options = { etag : false };
 passportConfig();
-/*
-app.set('view engine', 'html');
 
-nunjucks.configure('views', {
-  express: app,
-  watch: true,
-});
-*/
 app.use(morgan('dev'));
 //app.use(express.static(path.join(__dirname, 'public'),options));
 app.use(express.static(path.join(__dirname, '../client/build/'),options));

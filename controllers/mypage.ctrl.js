@@ -1,10 +1,7 @@
 const express = require('express');
-//const jsonwebtoken = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-//const { isLoggedIn, isNotLoggedIn, verifyToken } = require('./middlewares');
 const db = require('../models/db')();
 const connection = db.init();
-db.test_open(connection);
 
 const info = (req,res)=>{
     const id = req.decoded.id;

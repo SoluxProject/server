@@ -3,11 +3,13 @@ const router = express.Router();
 const { verifyToken } = require('./middlewares');
 const schedule = require('node-schedule');
 const ctrl = require("../controllers/timerDay.ctrl");
+const db = require('../models/db')();
+const connection = db.init();
 
 router.get('/list', verifyToken, ctrl.list);
 router.post('/update', verifyToken, ctrl.update);
 
-schedule.scheduleJob('0 0 0 * * *',  async () => {
+schedule.scheduleJob('0 37 11 * * *',  async () => {
     try {
         //const timerDayid = req.decoded.id; //현재 로그인한 사용자 뿐만 아니라 전체 사용자의 기록 갱신 (수정)
         const sqlSelectWeek = "SELECT recordWeek from timerWeek WHERE timerWeekid = ?";

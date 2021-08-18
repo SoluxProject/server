@@ -1,5 +1,5 @@
 const express = require('express');
-const { isLoggedIn, isNotLoggedIn, verifyToken } = require('./middlewares');
+const { isNotLoggedIn, verifyToken } = require('./middlewares');
 const router = express.Router();
 const ctrl = require("../controllers/page.ctrl");
 

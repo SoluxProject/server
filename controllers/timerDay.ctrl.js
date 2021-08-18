@@ -1,7 +1,6 @@
 const express = require('express');
 const solux_db = require('../models/db')();
 const connection = solux_db.init();
-solux_db.test_open(connection);
 
 const list = (req, res) => {
     const id = req.decoded.id;
