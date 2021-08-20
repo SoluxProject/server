@@ -70,13 +70,13 @@ const login = (req, res, next) => {
                 return next(loginError);
             }
             const token = jwt.sign(
-                { id: user.id }, process.env.JWT_SECRET, { expiresIn: "1m" });
+                { id: user.id }, process.env.JWT_SECRET, { expiresIn: "30m" });
             console.log('로그인 성공');
             console.log(user.id);
             //세션 쿠키를 브라우저로 보내줘요.
             //return res.json({success : true, message : "로그인 성공", token});
             console.log(token);
-            res.cookie("loginToken", token, { maxAge: 60000 });
+            res.cookie("loginToken", token, { maxAge: 60*1000*30 });
             return res.json({ success: true, message: "로그인 성공" });
         });
     })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
